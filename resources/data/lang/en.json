@@ -202,5 +202,16 @@
     "Budget Items": "Budget Items",
     "Budget Allocations": "Budget Allocations",
     "Account Selection": "Account Selection",
-    "Custom": "Custom"
+    "Custom": "Custom",
+    "Item Information": "Item Information",
+    "PCS": "PCS",
+    "KILOGRAM": "KILOGRAM",
+    "GRAM": "GRAM",
+    "LITER": "LITER",
+    "MILILITER": "MILILITER",
+    "pcs": "pcs",
+    "kg": "kg",
+    "gr": "gr",
+    "l": "l",
+    "ml": "ml"
 }

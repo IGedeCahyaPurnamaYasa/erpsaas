@@ -202,5 +202,16 @@
     "Invoice Header": "Header Faktur",
     "Dates & Time": "Tanggal & Waktu",
     "Estimate Header": "Estimasi Header",
-    "Approve": "Menyetujui"
+    "Approve": "Menyetujui",
+    "pcs": "pcs",
+    "Item Information": "Item Information",
+    "PCS": "PCS",
+    "KILOGRAM": "KILOGRAM",
+    "kg": "kg",
+    "gr": "gr",
+    "l": "l",
+    "ml": "ml",
+    "GRAM": "GRAM",
+    "MILILITER": "MILILITER",
+    "LITER": "LITER"
 }

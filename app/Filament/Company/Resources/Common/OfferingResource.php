@@ -7,13 +7,18 @@ use App\Enums\Accounting\AccountType;
 use App\Enums\Accounting\AdjustmentCategory;
 use App\Enums\Accounting\AdjustmentType;
 use App\Enums\Common\OfferingType;
+use App\Enums\Setting\Unit;
 use App\Filament\Company\Resources\Common\OfferingResource\Pages;
 use App\Filament\Forms\Components\Banner;
 use App\Filament\Forms\Components\CreateAccountSelect;
 use App\Filament\Forms\Components\CreateAdjustmentSelect;
+use App\Filament\Forms\Components\CreateStockKeepingUnitSelect;
 use App\Models\Common\Offering;
+use App\Models\Common\StockKeepingUnit;
+use App\Models\Common\PriceHistory;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -57,9 +62,9 @@ class OfferingResource extends Resource
                     }),
                 static::getGeneralSection(),
                 // Sellable Section
-                static::getSellableSection(),
+                ...static::getSellableSection(),
                 // Purchasable Section
-                static::getPurchasableSection(),
+                ...static::getPurchasableSection(),
             ])->columns();
     }
 
@@ -102,58 +107,94 @@ class OfferingResource extends Resource
             ])->columns();
     }
 
-    public static function getSellableSection(): Forms\Components\Section
+    public static function getSellableSection(): array //Forms\Components\Section
     {
-        return Forms\Components\Section::make('Sale Information')
-            ->schema([
-                CreateAccountSelect::make('income_account_id')
-                    ->label('Income account')
-                    ->category(AccountCategory::Revenue)
-                    ->type(AccountType::OperatingRevenue)
-                    ->required()
-                    ->validationMessages([
-                        'required' => 'The income account is required for sellable offerings.',
-                    ]),
-                CreateAdjustmentSelect::make('salesTaxes')
-                    ->label('Sales tax')
-                    ->category(AdjustmentCategory::Tax)
-                    ->type(AdjustmentType::Sales)
-                    ->multiple(),
-                CreateAdjustmentSelect::make('salesDiscounts')
-                    ->label('Sales discount')
-                    ->category(AdjustmentCategory::Discount)
-                    ->type(AdjustmentType::Sales)
-                    ->multiple(),
-            ])
-            ->columns()
-            ->visible(static fn (Forms\Get $get) => in_array('Sellable', $get('attributes') ?? []));
+        return [
+            Forms\Components\Section::make('Item Information')
+                ->schema([
+                    CreateStockKeepingUnitSelect::make('stock_keeping_unit_id')
+                        ->label('SKU')
+                        ->required()
+                        ->validationMessages([
+                            'required' => 'The sku code is required for sellable offerings.',
+                        ])
+                        ->afterStateUpdated(function (string $state, Set $set) {
+                            if ($state) {
+                                $sku = StockKeepingUnit::find($state);
+                                $set('stock_keeping_unit_number', str_pad($sku->increment, 4, '0', STR_PAD_LEFT));
+                            }
+                        }),
+                    Forms\Components\TextInput::make('stock_keeping_unit_number')
+                        ->label('Number')
+                        ->required()
+                        ->numeric(),
+                ])
+                ->columns()
+                ->visible(static fn (Forms\Get $get) => in_array('Sellable', $get('attributes') ?? [])),
+            Forms\Components\Section::make('Sale Information')
+                ->schema([
+                    CreateAccountSelect::make('income_account_id')
+                        ->label('Income account')
+                        ->category(AccountCategory::Revenue)
+                        ->type(AccountType::OperatingRevenue)
+                        ->required()
+                        ->validationMessages([
+                            'required' => 'The income account is required for sellable offerings.',
+                        ]),
+                    CreateAdjustmentSelect::make('salesTaxes')
+                        ->label('Sales tax')
+                        ->category(AdjustmentCategory::Tax)
+                        ->type(AdjustmentType::Sales)
+                        ->multiple(),
+                    CreateAdjustmentSelect::make('salesDiscounts')
+                        ->label('Sales discount')
+                        ->category(AdjustmentCategory::Discount)
+                        ->type(AdjustmentType::Sales)
+                        ->multiple(),
+                ])
+                ->columns()
+                ->visible(static fn (Forms\Get $get) => in_array('Sellable', $get('attributes') ?? []))
+        ];
     }
 
-    public static function getPurchasableSection(): Forms\Components\Section
+    public static function getPurchasableSection(): array//Forms\Components\Section
     {
-        return Forms\Components\Section::make('Purchase Information')
-            ->schema([
-                CreateAccountSelect::make('expense_account_id')
-                    ->label('Expense account')
-                    ->category(AccountCategory::Expense)
-                    ->type(AccountType::OperatingExpense)
-                    ->required()
-                    ->validationMessages([
-                        'required' => 'The expense account is required for purchasable offerings.',
-                    ]),
-                CreateAdjustmentSelect::make('purchaseTaxes')
-                    ->label('Purchase tax')
-                    ->category(AdjustmentCategory::Tax)
-                    ->type(AdjustmentType::Purchase)
-                    ->multiple(),
-                CreateAdjustmentSelect::make('purchaseDiscounts')
-                    ->label('Purchase discount')
-                    ->category(AdjustmentCategory::Discount)
-                    ->type(AdjustmentType::Purchase)
-                    ->multiple(),
-            ])
-            ->columns()
-            ->visible(static fn (Forms\Get $get) => in_array('Purchasable', $get('attributes') ?? []));
+        return [
+                Forms\Components\Section::make('Item Information')
+                    ->schema([
+                        Forms\Components\TextInput::make('quantity')
+                            ->required()
+                            ->numeric(),
+                        Forms\Components\Select::make('unit')
+                            ->required()
+                            ->options(Unit::class)
+                    ])
+                    ->columns()
+                    ->visible(static fn (Forms\Get $get) => in_array('Purchasable', $get('attributes') ?? [])),
+                Forms\Components\Section::make('Purchase Information')
+                    ->schema([
+                        CreateAccountSelect::make('expense_account_id')
+                            ->label('Expense account')
+                            ->category(AccountCategory::Expense)
+                            ->type(AccountType::OperatingExpense)
+                            ->required()
+                            ->validationMessages([
+                                'required' => 'The expense account is required for purchasable offerings.',
+                            ]),
+                        CreateAdjustmentSelect::make('purchaseTaxes')
+                            ->label('Purchase tax')
+                            ->category(AdjustmentCategory::Tax)
+                            ->type(AdjustmentType::Purchase)
+                            ->multiple(),
+                        CreateAdjustmentSelect::make('purchaseDiscounts')
+                            ->label('Purchase discount')
+                            ->category(AdjustmentCategory::Discount)
+                            ->type(AdjustmentType::Purchase)
+                            ->multiple(),
+                    ])
+                    ->columns()
+                    ->visible(static fn (Forms\Get $get) => in_array('Purchasable', $get('attributes') ?? []))
+            ];
     }
 
     public static function table(Table $table): Table
@@ -171,6 +212,9 @@ class OfferingResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name'),
+                Tables\Columns\TextColumn::make('fullStockKeepingUnit')
+                    ->label('SKU')
+                    ->default('-'),
                 Tables\Columns\TextColumn::make('attributes')
                     ->label('Attributes')
                     ->badge(),
@@ -197,6 +241,20 @@ class OfferingResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('price_history')
+                    ->label('Price History')
+                    ->icon('heroicon-o-clock')
+                    ->color('warning')
+                    ->modalContent(function (Offering $record) {
+                        $priceHistories = $record->priceHistories()->latest()->get();
+                        
+                        return view('filament.modals.price-history', [
+                            'offering' => $record,
+                            'priceHistories' => $priceHistories,
+                        ]);
+                    })
+                    ->modalWidth('4xl')
+                    ->modalFooterActions(fn () => []),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

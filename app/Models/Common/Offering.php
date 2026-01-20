@@ -11,6 +11,7 @@ use App\Models\Accounting\Account;
 use App\Models\Accounting\Adjustment;
 use App\Observers\OfferingObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,19 +30,36 @@ class Offering extends Model
         'description',
         'type',
         'price',
+        'quantity',
+        'unit',
         'sellable',
         'purchasable',
         'income_account_id',
         'expense_account_id',
         'created_by',
         'updated_by',
+        'stock_keeping_unit_id',
+        'stock_keeping_unit_number',
     ];
 
     protected $casts = [
         'type' => OfferingType::class,
+        'price' => 'integer',
+        'quantity' => 'integer',
         'sellable' => 'boolean',
         'purchasable' => 'boolean',
     ];
+
+    protected function fullStockKeepingUnit(): Attribute
+    {
+        return Attribute::get(function () {
+            if(isset($this->stockKeepingUnit)){
+                return trim("{$this->stockKeepingUnit->code}-{$this->stock_keeping_unit_number}");
+            }
+
+            return '-';
+        });
+    }
 
     public function clearSellableAdjustments(): void
     {
@@ -73,6 +91,11 @@ class Offering extends Model
     public function expenseAccount(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'expense_account_id');
+    }
+
+    public function stockKeepingUnit(): BelongsTo
+    {
+        return $this->belongsTo(StockKeepingUnit::class, 'stock_keeping_unit_id');
     }
 
     public function adjustments(): MorphToMany
@@ -115,5 +138,10 @@ class Offering extends Model
         return $this->adjustments->contains(function (Adjustment $adjustment) {
             return $adjustment->isInactive();
         });
+    }
+
+    public function priceHistories()
+    {
+        return $this->morphMany(PriceHistory::class, 'priceable');
     }
 }

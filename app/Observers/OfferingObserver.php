@@ -3,6 +3,8 @@
 namespace App\Observers;
 
 use App\Models\Common\Offering;
+use App\Models\Common\PriceHistory;
+use App\Models\Common\StockKeepingUnit;
 
 class OfferingObserver
 {
@@ -18,6 +20,30 @@ class OfferingObserver
     {
         $offering->clearSellableAdjustments();
         $offering->clearPurchasableAdjustments();
+
+        if ($offering->sellable && $offering->stock_keeping_unit_id) {
+            $sku_number = (int) $offering->stock_keeping_unit_number;
+
+            StockKeepingUnit::find($offering->stock_keeping_unit_id)
+            ->update([
+                'increment' => $sku_number + 1
+            ]);
+        }
+    }
+
+    /**
+     * Handle the Offering "updated" event.
+     */
+    public function updating(Offering $offering): void
+    {
+        if($offering->isDirty('stock_keeping_unit_id')){
+            $sku_number = (int) $offering->stock_keeping_unit_number;
+    
+            StockKeepingUnit::find($offering->stock_keeping_unit_id)
+            ->update([
+                'increment' => $sku_number + 1
+            ]);
+        }
     }
 
     /**
@@ -25,7 +51,25 @@ class OfferingObserver
      */
     public function updated(Offering $offering): void
     {
-        //
+        if ($offering->isDirty(['price', 'unit'])) {
+            $original = $offering->getOriginal();
+            
+            // Convert from cents to actual currency values for storage
+            $beforePrice = $original['price'] / 100;
+            $afterPrice = $offering->price / 100;
+            
+            $beforeUnitPrice = $offering->quantity > 0 ? round($beforePrice / $offering->quantity, 2) : $beforePrice;
+            $afterUnitPrice = $offering->quantity > 0 ? round($afterPrice / $offering->quantity, 2) : $afterPrice;
+
+            PriceHistory::create([
+                'priceable_id' => $offering->id,
+                'priceable_type' => Offering::class,
+                'before' => $beforePrice,
+                'after' => $afterPrice,
+                'unit_price_before' => $beforeUnitPrice,
+                'unit_price_after' => $afterUnitPrice,
+            ]);
+        }
     }
 
     /**
