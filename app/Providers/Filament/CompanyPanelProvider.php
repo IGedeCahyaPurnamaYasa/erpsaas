@@ -28,6 +28,8 @@ use App\Filament\Company\Resources\Accounting\BudgetResource;
 use App\Filament\Company\Resources\Accounting\TransactionResource;
 use App\Filament\Company\Resources\Banking\AccountResource;
 use App\Filament\Company\Resources\Common\OfferingResource;
+use App\Filament\Company\Resources\Inventory\InventoryResource;
+use App\Filament\Company\Resources\Inventory\InventoryTransactionResource;
 use App\Filament\Company\Resources\Purchases\BillResource;
 use App\Filament\Company\Resources\Purchases\VendorResource;
 use App\Filament\Company\Resources\Sales\ClientResource;
@@ -163,6 +165,13 @@ class CompanyPanelProvider extends PanelProvider
                             ->localizeLabel()
                             ->icon('heroicon-o-building-library')
                             ->items(AccountResource::getNavigationItems()),
+                        NavigationGroup::make('Inventory')
+                            ->localizeLabel()
+                            ->icon('heroicon-o-archive-box')
+                            ->items([
+                                ...InventoryResource::getNavigationItems(),
+                                ...InventoryTransactionResource::getNavigationItems(),
+                            ]),
                         NavigationGroup::make('Services')
                             ->localizeLabel()
                             ->icon('heroicon-o-wrench-screwdriver')

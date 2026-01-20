@@ -213,5 +213,7 @@
     "kg": "kg",
     "gr": "gr",
     "l": "l",
-    "ml": "ml"
+    "ml": "ml",
+    "Inventory": "Inventory",
+    "Transaction Information": "Transaction Information"
 }

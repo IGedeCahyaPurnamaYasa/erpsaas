@@ -9,12 +9,14 @@ use App\Enums\Accounting\AdjustmentType;
 use App\Enums\Common\OfferingType;
 use App\Models\Accounting\Account;
 use App\Models\Accounting\Adjustment;
+use App\Models\Inventory\Inventory;
 use App\Observers\OfferingObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 #[ObservedBy(OfferingObserver::class)]
@@ -96,6 +98,11 @@ class Offering extends Model
     public function stockKeepingUnit(): BelongsTo
     {
         return $this->belongsTo(StockKeepingUnit::class, 'stock_keeping_unit_id');
+    }
+
+    public function inventory(): HasOne
+    {
+        return $this->hasOne(Inventory::class, 'offering_id');
     }
 
     public function adjustments(): MorphToMany
