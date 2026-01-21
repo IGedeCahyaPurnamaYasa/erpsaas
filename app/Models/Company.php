@@ -10,8 +10,8 @@ use App\Models\Common\Client;
 use App\Models\Common\Contact;
 use App\Models\Common\Offering;
 use App\Models\Core\Department;
-use App\Models\Inventory\Inventory;
-use App\Models\Inventory\InventoryTransaction;
+use App\Models\Stock\Stock;
+use App\Models\Stock\StockTransaction;
 use App\Models\Setting\CompanyDefault;
 use App\Models\Setting\CompanyProfile;
 use App\Models\Setting\Currency;
@@ -175,14 +175,14 @@ class Company extends FilamentCompaniesCompany implements HasAvatar
         return $this->hasMany(Accounting\Estimate::class, 'company_id');
     }
 
-    public function inventories(): HasMany
+    public function stocks(): HasMany
     {
-        return $this->hasMany(Inventory::class, 'company_id');
+        return $this->hasMany(Stock::class, 'company_id');
     }
 
-    public function inventoryTransactions(): HasMany
+    public function stockTransactions(): HasMany
     {
-        return $this->hasMany(InventoryTransaction::class, 'company_id');
+        return $this->hasMany(StockTransaction::class, 'company_id');
     }
 
     public function invoices(): HasMany

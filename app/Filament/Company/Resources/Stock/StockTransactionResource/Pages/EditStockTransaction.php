@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Filament\Company\Resources\Stock\StockTransactionResource\Pages;
+
+use App\Filament\Company\Resources\Stock\StockTransactionResource;
+use Filament\Actions;
+use Filament\Resources\Pages\EditRecord;
+
+class EditStockTransaction extends EditRecord
+{
+    protected static string $resource = StockTransactionResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\DeleteAction::make(),
+        ];
+    }
+
+
+}

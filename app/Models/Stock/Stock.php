@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Models\Inventory;
+namespace App\Models\Stock;
 
 use App\Concerns\Blamable;
 use App\Concerns\CompanyOwned;
 use App\Models\Common\Offering;
+use App\Models\Stock\StockTransaction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Inventory extends Model
+class Stock extends Model
 {
     use Blamable;
     use CompanyOwned;
 
-    protected $table = 'inventories';
+    protected $table = 'stocks';
 
     protected $fillable = [
         'company_id',
@@ -38,9 +39,9 @@ class Inventory extends Model
         return $this->belongsTo(Offering::class);
     }
 
-    public function inventoryTransactions(): HasMany
+    public function stockTransactions(): HasMany
     {
-        return $this->hasMany(InventoryTransaction::class, 'inventory_id');
+        return $this->hasMany(StockTransaction::class, 'inventory_id');
     }
 
     public function needsReorder(): bool

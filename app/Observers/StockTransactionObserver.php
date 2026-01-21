@@ -2,57 +2,57 @@
 
 namespace App\Observers;
 
-use App\Models\Inventory\InventoryTransaction;
-use App\Models\Inventory\Inventory;
+use App\Models\Stock\StockTransaction;
+use App\Models\Stock\Stock;
 
-class InventoryTransactionObserver
+class StockTransactionObserver
 {
     /**
-     * Handle the InventoryTransaction "created" event.
+     * Handle the StockTransaction "created" event.
      */
-    public function created(InventoryTransaction $transaction): void
+    public function created(StockTransaction $transaction): void
     {
-        $this->updateInventoryQuantity($transaction);
+        $this->updateStockQuantity($transaction);
     }
 
     /**
-     * Handle the InventoryTransaction "updated" event.
+     * Handle the StockTransaction "updated" event.
      */
-    public function updated(InventoryTransaction $transaction): void
+    public function updated(StockTransaction $transaction): void
     {
-        $this->recalculateInventoryQuantity($transaction);
+        $this->recalculateStockQuantity($transaction);
     }
 
     /**
-     * Handle the InventoryTransaction "deleted" event.
+     * Handle the StockTransaction "deleted" event.
      */
-    public function deleted(InventoryTransaction $transaction): void
+    public function deleted(StockTransaction $transaction): void
     {
-        $this->reverseInventoryQuantity($transaction);
+        $this->reverseStockQuantity($transaction);
     }
 
     /**
-     * Update inventory quantity when transaction is created
+     * Update stock quantity when transaction is created
      */
-    protected function updateInventoryQuantity(InventoryTransaction $transaction): void
+    protected function updateStockQuantity(StockTransaction $transaction): void
     {
-        $inventory = $transaction->inventory;
+        $stock = $transaction->stock;
 
-        if ($inventory) {
+        if ($stock) {
             $quantityChange = $transaction->calculateQuantityChange();
-            $inventory->quantity_on_hand += $quantityChange;
-            $inventory->save();
+            $stock->quantity_on_hand += $quantityChange;
+            $stock->save();
         }
     }
 
     /**
-     * Recalculate inventory quantity when transaction is updated
+     * Recalculate stock quantity when transaction is updated
      */
-    protected function recalculateInventoryQuantity(InventoryTransaction $transaction): void
+    protected function recalculateStockQuantity(StockTransaction $transaction): void
     {
-        $inventory = $transaction->inventory;
+        $stock = $transaction->stock;
 
-        if ($inventory) {
+        if ($stock) {
             // Get the original transaction data from the changes
             $original = $transaction->getOriginal();
             $current = $transaction->getAttributes();
@@ -70,23 +70,23 @@ class InventoryTransactionObserver
             // Net change is current minus original
             $netChange = $currentChange - $originalChange;
 
-            $inventory->quantity_on_hand += $netChange;
-            $inventory->save();
+            $stock->quantity_on_hand += $netChange;
+            $stock->save();
         }
     }
 
     /**
-     * Reverse inventory quantity when transaction is deleted
+     * Reverse stock quantity when transaction is deleted
      */
-    protected function reverseInventoryQuantity(InventoryTransaction $transaction): void
+    protected function reverseStockQuantity(StockTransaction $transaction): void
     {
-        $inventory = $transaction->inventory;
+        $stock = $transaction->stock;
 
-        if ($inventory) {
+        if ($stock) {
             $quantityChange = $transaction->calculateQuantityChange();
             // Reverse the change (opposite of what was applied)
-            $inventory->quantity_on_hand -= $quantityChange;
-            $inventory->save();
+            $stock->quantity_on_hand -= $quantityChange;
+            $stock->save();
         }
     }
 

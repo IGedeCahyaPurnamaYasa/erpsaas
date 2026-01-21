@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Models\Inventory;
+namespace App\Models\Stock;
 
 use App\Concerns\Blamable;
 use App\Concerns\CompanyOwned;
-use App\Models\Inventory\Inventory;
-use App\Observers\InventoryTransactionObserver;
+use App\Models\Stock\Stock;
+use App\Observers\StockTransactionObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[ObservedBy(InventoryTransactionObserver::class)]
-class InventoryTransaction extends Model
+#[ObservedBy(StockTransactionObserver::class)]
+class StockTransaction extends Model
 {
     use Blamable;
     use CompanyOwned;
@@ -32,9 +32,9 @@ class InventoryTransaction extends Model
         'quantity' => 'integer',
     ];
 
-    public function inventory(): BelongsTo
+    public function stock(): BelongsTo
     {
-        return $this->belongsTo(Inventory::class, 'inventory_id');
+        return $this->belongsTo(Stock::class, 'inventory_id');
     }
 
     public function scopeIn($query)

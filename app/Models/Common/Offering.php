@@ -9,7 +9,7 @@ use App\Enums\Accounting\AdjustmentType;
 use App\Enums\Common\OfferingType;
 use App\Models\Accounting\Account;
 use App\Models\Accounting\Adjustment;
-use App\Models\Inventory\Inventory;
+use App\Models\Stock\Stock;
 use App\Observers\OfferingObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -100,9 +100,9 @@ class Offering extends Model
         return $this->belongsTo(StockKeepingUnit::class, 'stock_keeping_unit_id');
     }
 
-    public function inventory(): HasOne
+    public function stock(): HasOne
     {
-        return $this->hasOne(Inventory::class, 'offering_id');
+        return $this->hasOne(Stock::class, 'offering_id');
     }
 
     public function adjustments(): MorphToMany

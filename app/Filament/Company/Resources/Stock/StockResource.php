@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Company\Resources\Inventory;
+namespace App\Filament\Company\Resources\Stock;
 
-use App\Filament\Company\Resources\Inventory\InventoryResource\Pages;
-use App\Models\Inventory\Inventory;
+use App\Filament\Company\Resources\Stock\StockResource\Pages;
+use App\Models\Stock\Stock;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -11,11 +11,11 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 
-class InventoryResource extends Resource
+class StockResource extends Resource
 {
-    protected static ?string $model = Inventory::class;
+    protected static ?string $model = Stock::class;
 
-    protected static ?string $tenantRelationshipName = 'inventories';
+    protected static ?string $tenantRelationshipName = 'stocks';
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
 
@@ -44,10 +44,10 @@ class InventoryResource extends Resource
                             ->getOptionLabelFromRecordUsing(fn ($record) => $record->name)
                             ->options(function (callable $get) {
                                 return \App\Models\Common\Offering::where('purchasable', true)
-                                    ->whereDoesntHave('inventory')
+                                    ->whereDoesntHave('stock')
                                     ->pluck('name', 'id');
                             })
-                            ->unique(ignoreRecord: true),
+                            ->unique(true),
                         Forms\Components\TextInput::make('quantity_on_hand')
                             ->numeric()
                             ->required()
@@ -136,9 +136,9 @@ class InventoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListInventoryData::route('/'),
-            'create' => Pages\CreateInventoryData::route('/create'),
-            'edit' => Pages\EditInventoryData::route('/{record}/edit'),
+            'index' => Pages\ListStockData::route('/'),
+            'create' => Pages\CreateStockData::route('/create'),
+            'edit' => Pages\EditStockData::route('/{record}/edit'),
         ];
     }
 }

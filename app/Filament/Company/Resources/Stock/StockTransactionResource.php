@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Company\Resources\Inventory;
+namespace App\Filament\Company\Resources\Stock;
 
-use App\Filament\Company\Resources\Inventory\InventoryTransactionResource\Pages;
-use App\Models\Inventory\InventoryTransaction;
+use App\Filament\Company\Resources\Stock\StockTransactionResource\Pages;
+use App\Models\Stock\StockTransaction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -11,11 +11,11 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class InventoryTransactionResource extends Resource
+class StockTransactionResource extends Resource
 {
-    protected static ?string $model = InventoryTransaction::class;
+    protected static ?string $model = StockTransaction::class;
 
-    protected static ?string $tenantRelationshipName = 'inventoryTransactions';
+    protected static ?string $tenantRelationshipName = 'stockTransactions';
 
     protected static ?string $navigationIcon = 'heroicon-o-arrows-right-left';
 
@@ -36,11 +36,11 @@ class InventoryTransactionResource extends Resource
                 Forms\Components\Section::make('Transaction Information')
                     ->schema([
                         Forms\Components\Select::make('inventory_id')
-                            ->relationship('inventory', 'id')
+                            ->relationship('stock', 'id')
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->label('Inventory Item')
+                            ->label('Stock Item')
                             ->getOptionLabelFromRecordUsing(fn ($record) => $record->offering ? $record->offering->name : 'Item #' . $record->id),
                         Forms\Components\Select::make('transaction_type')
                             ->options([
@@ -82,14 +82,14 @@ class InventoryTransactionResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                return $query->with(['inventory.offering']);
+                return $query->with(['stock.offering']);
             })
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Date')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('inventory.offering.name')
+                Tables\Columns\TextColumn::make('stock.offering.name')
                     ->label('Product/Service')
                     ->searchable()
                     ->sortable(),
@@ -190,9 +190,9 @@ class InventoryTransactionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListInventoryTransactions::route('/'),
-            'create' => Pages\CreateInventoryTransaction::route('/create'),
-            'edit' => Pages\EditInventoryTransaction::route('/{record}/edit'),
+            'index' => Pages\ListStockTransactions::route('/'),
+            'create' => Pages\CreateStockTransaction::route('/create'),
+            'edit' => Pages\EditStockTransaction::route('/{record}/edit'),
         ];
     }
 }

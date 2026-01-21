@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Filament\Company\Resources\Inventory\InventoryTransactionResource\Pages;
+namespace App\Filament\Company\Resources\Stock\StockTransactionResource\Pages;
 
-use App\Filament\Company\Resources\Inventory\InventoryTransactionResource;
+use App\Filament\Company\Resources\Stock\StockTransactionResource;
 
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class CreateInventoryTransaction extends CreateRecord
+class CreateStockTransaction extends CreateRecord
 {
-    protected static string $resource = InventoryTransactionResource::class;
+    protected static string $resource = StockTransactionResource::class;
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {

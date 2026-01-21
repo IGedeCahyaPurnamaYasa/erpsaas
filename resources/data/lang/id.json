@@ -213,5 +213,8 @@
     "ml": "ml",
     "GRAM": "GRAM",
     "MILILITER": "MILILITER",
-    "LITER": "LITER"
+    "LITER": "LITER",
+    "Inventory": "Inventory",
+    "Stock": "Stock",
+    "Transaction Information": "Transaction Information"
 }
