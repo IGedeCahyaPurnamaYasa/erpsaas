@@ -216,5 +216,13 @@
     "ml": "ml",
     "Inventory": "Inventory",
     "Transaction Information": "Transaction Information",
-    "Stock": "Stock"
+    "Stock": "Stock",
+    "Assets": "Assets",
+    "Asset Information": "Asset Information",
+    "Identification & Location": "Identification & Location",
+    "Financial Information": "Financial Information",
+    "Depreciation Information": "Depreciation Information",
+    "details": "details",
+    "depreciation": "depreciation",
+    "Asset Depreciation Records": "Asset Depreciation Records"
 }

@@ -28,6 +28,8 @@ use App\Filament\Company\Resources\Accounting\BudgetResource;
 use App\Filament\Company\Resources\Accounting\TransactionResource;
 use App\Filament\Company\Resources\Banking\AccountResource;
 use App\Filament\Company\Resources\Common\OfferingResource;
+use App\Filament\Company\Resources\Asset\AssetResource;
+use App\Filament\Company\Resources\Asset\DepreciationResource;
 use App\Filament\Company\Resources\Stock\StockResource;
 use App\Filament\Company\Resources\Stock\StockTransactionResource;
 use App\Filament\Company\Resources\Purchases\BillResource;
@@ -165,6 +167,13 @@ class CompanyPanelProvider extends PanelProvider
                             ->localizeLabel()
                             ->icon('heroicon-o-building-library')
                             ->items(AccountResource::getNavigationItems()),
+                        NavigationGroup::make('Assets')
+                            ->localizeLabel()
+                            ->icon('heroicon-o-cube')
+                            ->items([
+                                ...AssetResource::getNavigationItems(),
+                                ...DepreciationResource::getNavigationItems(),
+                            ]),
                         NavigationGroup::make('Stock')
                             ->localizeLabel()
                             ->icon('heroicon-o-archive-box')

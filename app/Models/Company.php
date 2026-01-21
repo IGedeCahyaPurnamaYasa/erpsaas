@@ -10,6 +10,8 @@ use App\Models\Common\Client;
 use App\Models\Common\Contact;
 use App\Models\Common\Offering;
 use App\Models\Core\Department;
+use App\Models\Asset\Asset;
+use App\Models\Asset\Depreciation;
 use App\Models\Stock\Stock;
 use App\Models\Stock\StockTransaction;
 use App\Models\Setting\CompanyDefault;
@@ -173,6 +175,16 @@ class Company extends FilamentCompaniesCompany implements HasAvatar
     public function estimates(): HasMany
     {
         return $this->hasMany(Accounting\Estimate::class, 'company_id');
+    }
+
+    public function assets(): HasMany
+    {
+        return $this->hasMany(Asset::class, 'company_id');
+    }
+
+    public function depreciations(): HasMany
+    {
+        return $this->hasMany(Depreciation::class, 'company_id');
     }
 
     public function stocks(): HasMany
