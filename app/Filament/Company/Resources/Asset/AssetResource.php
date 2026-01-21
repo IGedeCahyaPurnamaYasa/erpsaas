@@ -34,6 +34,7 @@ class AssetResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Tabs::make('AssetTabs')
+                    ->columnSpanFull()
                     ->tabs([
                         static::getAssetInfoTab(),
                         static::getDepreciationTab(),
